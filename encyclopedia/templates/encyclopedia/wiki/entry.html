@@ -11,6 +11,10 @@
     <!-- write html to layout file instead of displaying plaintext -->
     {{html | safe}}
 
-    <a href="{% url 'index' %}">edit page</a>
+    <form action = "{% url 'edit' %}">
+
+        <button type="submit" name="title" value={{title}} >Edit Page</button>
+
+    </form>
  
 {% endblock %}

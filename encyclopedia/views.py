@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django import forms
 import markdown2
-
+import random
 
 from . import util
 import encyclopedia
@@ -13,7 +13,7 @@ import encyclopedia
 class NewEntryForm(forms.Form):
     title = forms.CharField(label = "Title")
     text = forms.CharField(widget=forms.Textarea, label = "Markdown Text")
-
+    
 
 
 def index(request):
@@ -133,9 +133,43 @@ def new(request):
         })
 
 
+def edit(request):
 
+    # use a get request when first clicking the edit button
+    if request.method=="GET":
+
+        # store the entry's title and markdown text in variables
+        title = request.GET.get("title")
+        text= util.get_entry(title)
+
+        # direct the user to the edit screen with the title and current markdown text initialized
+        return render(request, "encyclopedia/edit.html", {
+                "title": title,
+                "text": text
+            })
+
+    # the edit page submits the request back here as POST method when the user has finished editing
+    elif request.method=="POST":
+
+        # store the entry's title and new markdown text in variables
+        title = request.POST.get("title")
+        text = request.POST.get("text")
+
+        # use the save_entry function to update the entry
+        util.save_entry(title, text)
+
+        # finally, send the user to the updated entry page
+        return entry(request, title)
+
+    # return an error page if the request is neither GET nor POST
+    else:
+        return render(request, "encyclopedia/error.html", {
+            "message": "Page Not Found"
+        })
+
+
+def random_entry(request):
+    #random_ent = random.choice(util.list_entries)
+    return entry(request, random.choice(util.list_entries()))
 
 # TODO
-# edit page
-# maybe can use title to match to the filename of a md file?
-    # fundamentally they have to exist
