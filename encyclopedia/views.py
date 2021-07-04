@@ -16,7 +16,7 @@ class NewEntryForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea, label = "Markdown Text")
     
 
-
+# direct user to index page which displays all entries
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
