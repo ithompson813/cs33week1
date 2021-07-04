@@ -10,6 +10,7 @@ from . import util
 import encyclopedia
 
 
+# django form for creating a new entry
 class NewEntryForm(forms.Form):
     title = forms.CharField(label = "Title")
     text = forms.CharField(widget=forms.Textarea, label = "Markdown Text")
@@ -20,11 +21,6 @@ def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
-
-
-# directs user to the error page
-#def error(request):
-#    return render(request, "encyclopedia/error.html")
 
 
 # directs user to a wiki entry page if it exists
@@ -48,16 +44,21 @@ def entry(request, entry):
             "message": "Page Not Found"
         })
 
+
+# search for an entry by name
 def search(request):
 
     # define query on a variable for easier use
+    # query is sourced from an input on the html page
     query = request.GET.get('q')
 
     # check if query has an entry and return that page if true
     if util.get_entry(query):    
         return (entry(request,  query))
 
+    # if exact match is not found
     else:
+
         # create list to store entries close to search term if no match is found
         possible_results = []
 
@@ -120,7 +121,7 @@ def new(request):
             # direct user to new entry page
             return entry(request, title) 
 
-        # if inputs are not valid, return user to input page
+        # if inputs are not valid, return user to input page to try again
         else: 
             return render(request, "encyclopedia/new.html", {
                 "form": form
@@ -133,6 +134,7 @@ def new(request):
         })
 
 
+# edit an existing entry
 def edit(request):
 
     # use a get request when first clicking the edit button
@@ -168,8 +170,8 @@ def edit(request):
         })
 
 
+# send user to a random page
 def random_entry(request):
-    #random_ent = random.choice(util.list_entries)
-    return entry(request, random.choice(util.list_entries()))
 
-# TODO
+    # simply return a random entry page from the list of entries and direct user to that page
+    return entry(request, random.choice(util.list_entries()))
